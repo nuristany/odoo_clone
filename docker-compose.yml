@@ -1,0 +1,97 @@
+
+# services:
+#   web:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile.django
+#     command: gunicorn myOdoo.wsgi:application --bind 0.0.0.0:8001
+#     volumes:
+#       - .:/app
+#     ports:
+#       - "8001:8001"
+#     depends_on:
+#       - redis
+#     environment:
+#       - DJANGO_SETTINGS_MODULE=myOdoo.settings
+#       - CELERY_BROKER_URL=redis://redis:6379/1
+#       - EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend  # Update here
+#       - EMAIL_HOST=smtp.gmail.com
+#       - EMAIL_PORT=587
+#       - EMAIL_USE_TLS=True
+#       - EMAIL_HOST_USER=Zhakyadummy@gmail.com
+#       - EMAIL_HOST_PASSWORD=eslxlpmbfbucvdma  # Ensure this is correct
+#       - DEFAULT_FROM_EMAIL=Zhakyadummy@gmail.com
+
+
+
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.django
+    command: python manage.py runserver 0.0.0.0:8001  # Use Django's development server
+    volumes:
+      - .:/app
+    ports:
+      - "8001:8001"
+    depends_on:
+      - redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=myOdoo.settings
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+      - EMAIL_HOST=smtp.gmail.com
+      - EMAIL_PORT=587
+      - EMAIL_USE_TLS=True
+      - EMAIL_HOST_USER=Zhakyadummy@gmail.com
+      - EMAIL_HOST_PASSWORD=eslxlpmbfbucvdma
+      - DEFAULT_FROM_EMAIL=Zhakyadummy@gmail.com
+
+  redis:
+    image: redis:alpine
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    command: celery -A myOdoo worker --loglevel=info
+    depends_on:
+      - redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=myOdoo.settings
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend  # Update here
+      - EMAIL_HOST=smtp.gmail.com
+      - EMAIL_PORT=587
+      - EMAIL_USE_TLS=True
+      - EMAIL_HOST_USER=Zhakyadummy@gmail.com
+      - EMAIL_HOST_PASSWORD=eslxlpmbfbucvdma  # Ensure this is correct
+      - DEFAULT_FROM_EMAIL=Zhakyadummy@gmail.com
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    command: celery -A myOdoo beat --loglevel=info
+    depends_on:
+      - redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=myOdoo.settings
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend  # Update here
+      - EMAIL_HOST=smtp.gmail.com
+      - EMAIL_PORT=587
+      - EMAIL_USE_TLS=True
+      - EMAIL_HOST_USER=Zhakyadummy@gmail.com
+      - EMAIL_HOST_PASSWORD=eslxlpmbfbucvdma  # Ensure this is correct
+      - DEFAULT_FROM_EMAIL=Zhakyadummy@gmail.com
+
+
+
+
+
+
+
+
+
